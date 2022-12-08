@@ -1,3 +1,5 @@
+lapply(c("ggplot2", "broom", "tidyr", "ggrepel"), require, character.only = TRUE)
+
 ggplot(data = Health_Care, mapping = aes(x = Risk, y = Return, size = MarketCap, color = Industry, label = Industry)) +
   geom_point() +
   labs(title = "Risk and Return", x = "Risk (Standard Deviation)", y = "Expected Return", size = "Market Capitalisation", color = "Industry") +
