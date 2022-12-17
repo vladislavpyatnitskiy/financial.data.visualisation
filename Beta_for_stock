@@ -18,6 +18,8 @@ stock_return <- diff(log(data_frame$T.Adjusted))
 fit <- lm(stock_return ~ market_return)
 plot(market_return, stock_return, ylab="Stock Return (%)",
      xlab="Market Return (%)",
-     main="Beta for Stock")
+     main="Beta for Stock",
+     sub="Source: Yahoo Finance",
+     las=1)
 abline(fit)
 fit$coefficients[2]
