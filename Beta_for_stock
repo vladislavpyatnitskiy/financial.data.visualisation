@@ -12,11 +12,14 @@ for (Ticker in tickers)
   portfolioPrices <- cbind(portfolioPrices,
                            getSymbols(Ticker,
                                       src = "yahoo",
-                                      auto.assign=FALSE)[,4])
+                                      auto.assign=FALSE
+                                      )[,4]
+                           )
 portfolioPrices <- portfolioPrices[apply(portfolioPrices,
                                          1,
-                                         function(x) all(!is.na(x))),]
-
+                                         function(x) all(!is.na(x))
+                                         ),
+                                   ]
 colnames(portfolioPrices) <- tickers
 
 portfolioReturns <- ROC(portfolioPrices,
@@ -42,8 +45,7 @@ data_frame <- inner_join(stock,
 market_return <- diff(log(data_frame$GSPC.Adjusted))
 stock_return <- diff(log(data_frame$SBUX.Adjusted))
 
-fit <- lm(stock_return ~
-            market_return)
+fit <- lm(stock_return ~ market_return)
 plot(market_return,
      stock_return,
      ylab="Stock Return (%)",
