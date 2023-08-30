@@ -1,6 +1,9 @@
 # Data-Visualisation-for-finance-in-R
 Here yo can find graphs that might be useful for financial projects
 
+Check for more info in wiki:
+https://github.com/vladislavpyatnitskiy/Data-Visualisation-for-finance-in-R/wiki
+
 Data Source:
 Yahoo! Finance API
 
