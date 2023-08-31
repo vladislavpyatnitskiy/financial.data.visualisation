@@ -69,7 +69,8 @@ brplt <- function(x){
           main = "Insurance Stocks Performance for the Year",
           sub = "Source: Yahoo! Finance",
           xlab = "",
-          ylab = "Return"
+          ylab = "Return",
+          xlim = c(-0.15, 0.2)
   )
   
 }
