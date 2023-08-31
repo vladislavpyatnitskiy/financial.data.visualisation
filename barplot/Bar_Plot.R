@@ -1,6 +1,5 @@
 # Barplot
-brplt <- setClass():
-  function(x){
+brplt <- function(x){
     # Define the time period
     x <- merge(x[1,],
                   x[nrow(x),])
