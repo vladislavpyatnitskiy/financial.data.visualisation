@@ -1,57 +1,88 @@
-# Beta of a Stock Data Visualisation
+options(max.print=1000000)
 
 lapply(c("quantmod",
-         "dplyr"),
-       require,
-       character.only = TRUE)
+         "PortfolioAnalytics",
+         "timeSeries",
+         "fBasics",
+         "dplyr"
+),
+require,
+character.only = TRUE
+)
 
-tickers <- c("SBUX")
+tickers <- c("AIG",
+             "MET",
+             "UNM",
+             "HIG",
+             "OMF",
+             "^GSPC"
+)
+start_date <- "2023-01-10"
 
 portfolioPrices <- NULL
 for (Ticker in tickers) 
   portfolioPrices <- cbind(portfolioPrices,
                            getSymbols(Ticker,
+                                      from = start_date,
                                       src = "yahoo",
                                       auto.assign=FALSE
-                                      )[,4]
-                           )
+                           )[,4]
+  )
+
+
 portfolioPrices <- portfolioPrices[apply(portfolioPrices,
                                          1,
                                          function(x) all(!is.na(x))
-                                         ),
-                                   ]
+),
+]
+
 colnames(portfolioPrices) <- tickers
 
 portfolioReturns <- ROC(portfolioPrices,
                         type = "discrete")
 portfolioReturns <-as.timeSeries(portfolioPrices)
 
-stock <- as.data.frame(getSymbols("SBUX",
-                                  auto.assign=FALSE))
-market <- as.data.frame(getSymbols("^GSPC",
-                                   auto.assign=FALSE))
+portfolioReturns
 
-stock <- cbind(Date = rownames(stock),
-               stock)
-rownames(stock) <- 1:nrow(stock)
-
-market <- cbind(Date = rownames(market),
-                market)
-rownames(market) <- 1:nrow(market)
-
-data_frame <- inner_join(stock,
-                         market,
-                         by=c("Date"))
-market_return <- diff(log(data_frame$GSPC.Adjusted))
-stock_return <- diff(log(data_frame$SBUX.Adjusted))
-
-fit <- lm(stock_return ~ market_return)
-plot(market_return,
-     stock_return,
-     ylab="Stock Return (%)",
-     xlab="Market Return (%)",
-     main="Beta for Stock",
-     sub = "Source: Yahoo Finance",
-     las = 1)
-abline(fit)
-fit$coefficients[2]
+betaplot <- function(x){
+  # Calculate Returns
+  x=diff(log(portfolioReturns))
+  
+  # Get rid of NA
+  x <- x[-1,]
+  
+  # Create a Separate Time Series for Index
+  market_return <- x$`^GSPC`
+  
+  # Create Separate Time Series for Stock Returns
+  stock_returns <- x[,1:(ncol(x) - 1)]
+  
+  # Loop enables to generate multiple plots if there are more than 1   
+  for (n in 1:ncol(stock_returns)) {
+    # Run a regression (CAPM) 
+    fit <- lm(stock_returns[,n] ~ market_return)
+    
+    # Take ticker from Time Series to reflect on plot
+    name_beta_stock <- colnames(stock_returns[,n])
+    
+    # Create variable to reflect in ylab section of plot settings
+    beta_y_lab <- sprintf("%s Return (%%)", name_beta_stock)
+    
+    # Create variable to reflect in main section of plot settings
+    beta_main <- sprintf("%s Beta", name_beta_stock)
+    
+    # Create Scatter Plot
+    plot_for_beta <- plot(market_return,
+                          stock_returns[,n],
+                          ylab=beta_y_lab,
+                          xlab="Market Return (%)",
+                          main=beta_main,
+                          sub = "Source: Yahoo Finance",
+                          las = 1
+    )
+    
+    # Draw a trend line
+    abline_for_beta <- abline(fit, col = "red", lwd = 3)
+  }
+}  
+betaplot(portfolioReturns)
