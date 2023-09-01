@@ -1,4 +1,4 @@
-# Data-Visualisation-for-finance-in-R
+# Data-Visualisation-for-finance
 Here you can find graphs that might be useful for financial projects
 
 Check for more info in wiki:
