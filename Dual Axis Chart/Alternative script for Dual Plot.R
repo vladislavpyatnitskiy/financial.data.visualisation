@@ -21,7 +21,7 @@ dual_axis_plot <- function(x){
   # First data to plot
   obj1 <- xyplot(first_dual_part ~ dates_for_dual_plot,
                  data_for_dual_plot,
-                 ylab = "Stock A",
+                 ylab = colnames(first_dual_part),
                  xlab = "Trading Days",
                  main = "Stock Performance Comparison",
                  type = "l" , lwd=2, col="steelblue",
@@ -30,7 +30,7 @@ dual_axis_plot <- function(x){
   # Second data to plot
   obj2 <- xyplot(second_dual_part ~ dates_for_dual_plot,
                  data_for_dual_plot,
-                 ylab = "Stock B",
+                 ylab = colnames(second_dual_part),
                  type = "l", lwd=2, col="#69b3a2")
   
   # Make the plot with second y axis:
