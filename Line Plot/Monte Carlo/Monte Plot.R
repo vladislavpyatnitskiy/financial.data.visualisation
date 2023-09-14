@@ -1,9 +1,19 @@
+# Libraries 
+lapply(c("ggplot2",
+         "data.table",
+         "timeSeries"),
+       require,
+       character.only = TRUE)
+
 # Monte Function
 monte_carlo <- function(c, ndays, n){
+  
   # Create an empty list to contain plots
   all_monte_graphs <- NULL
+  
    # For each column in data set
   for (b in 1:(ncol(c))){
+    
     # Take column names for the graph
     names_for_montec <- colnames(c[,b])
     
@@ -27,6 +37,8 @@ monte_carlo <- function(c, ndays, n){
                                            ndays,
                                            replace = TRUE),
                                     2))
+    
+    # Calculate cumulative values for each scenarios
     paths <- apply(paths,
                    2,
                    cumprod)
