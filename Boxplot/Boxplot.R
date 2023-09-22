@@ -1,55 +1,53 @@
-# Install and activate these 4 packages in RStudio
+# Libraries to install
 lapply(c("quantmod",
          "PortfolioAnalytics",
          "timeSeries",
          "fBasics"
-         ),
-       require,
-       character.only = TRUE
-       )
+),
+require,
+character.only = TRUE
+)
 
-# Then, select tickers of stocks you want to get data of
-tickers <- c("1801.HK",
-             "6618.HK",
-             "1093.HK",
-             "1177.HK",
-             "2269.HK"
-             )
-             
-# Set up any start date you need  
-start_date <- "2017-10-17"
+# Function to create boxplot
+plot_of_box <- function(x, y = NULL, z = NULL, main = NULL){
+  
+  # Create empty variable to store values
+  portfolioPrices <- NULL
+  
+  # For each ticker get data
+  for (Ticker in x) 
+    portfolioPrices <- cbind(portfolioPrices,
+                             getSymbols(Ticker,
+                                        from = y,
+                                        to = z,
+                                        src = "yahoo",
+                                        auto.assign=FALSE)[,4])
+  # Get rid of NAs
+  portfolioPrices <- portfolioPrices[apply(portfolioPrices,
+                                           1,
+                                           function(x) all(!is.na(x))),]
+  # Give column names 
+  colnames(portfolioPrices) <- x
+  
+  # Make data discrete
+  portfolioReturns <- ROC(portfolioPrices,
+                          type = "discrete")
+  
+  # Make it Time Series
+  portfolioReturns <-as.timeSeries(portfolioPrices)
 
-# Here you can set up time period that you would like to analyse
-portfolioPrices <- NULL
-for (Ticker in tickers) 
-  portfolioPrices <- cbind(portfolioPrices,
-                           getSymbols(Ticker,
-                                      src = "yahoo",
-                                      auto.assign=FALSE
-                                      )[,4]
-                           )
-portfolioPrices <- portfolioPrices[apply(portfolioPrices,
-                                         1,
-                                         function(x) all(!is.na(x))
-                                         ),
-                                   ]
-colnames(portfolioPrices) <- tickers
-portfolioReturns <- ROC(portfolioPrices,
-                        type = "discrete")
-portfolioReturns <-as.timeSeries(portfolioPrices)
-
-# Get first values of stock prices
-head(portfolioReturns)
-
-# Of course you want to get returns
-lrtn=diff(log(portfolioReturns)
-          )
-lrtn <- lrtn[-1,]
-
-# Boxplot
-boxPlot(lrtn,
-        main = "Hong Kong Stocks",
-        title = FALSE,
-        xlab = "Source: Yahoo Finance",
-        ylab = "Returns"
-        )
+  # Make log returns and get rid of NA
+  portfolioReturns=diff(log(portfolioReturns))[-1,]
+  
+  # Boxplot
+  boxPlot(portfolioReturns,
+          main = main,
+          title = FALSE,
+          xlab = "Source: Yahoo Finance",
+          ylab = "Returns"
+  )
+}
+# Test
+plot_of_box(c("AAPL", "MSFT", "META", "GOOGL", "AMZN"),
+            y = "2020-01-01",
+            main = "Boxplot of IT companies")
