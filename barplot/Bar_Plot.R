@@ -1,7 +1,7 @@
 # Barplot
-brplt <- function(x){
+brplt <- function(x, y, col = "blue", main = NULL, xlim = NULL){
     # Define the time period
-    x <- merge(x[1,],
+    x <- merge(x[y,],
                   x[nrow(x),])
     
     # Calculate the change and remove NA
@@ -20,12 +20,12 @@ brplt <- function(x){
             names.arg = tickers_for_barplot,
             horiz = T,
             las=1,
-            col = "blue",
-            main = "Insurance Stocks Performance for the Year",
+            col = col,
+            main = main,
             sub = "Source: Yahoo! Finance",
             xlab = "Returns",
             ylab = "",
-            xlim = c(-0.15, 0.2)
+            xlim = xlim
     )
     
   }
