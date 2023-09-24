@@ -4,9 +4,8 @@ brplt <- function(x){
     x <- merge(x[1,],
                   x[nrow(x),])
     
-    # Calculate the change
-    x=diff(log(x))
-    x<-x[-1,]
+    # Calculate the change and remove NA
+    x=diff(log(x))[-1,]
     
     #
     colnames(x)
