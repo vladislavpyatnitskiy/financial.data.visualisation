@@ -1,23 +1,25 @@
 # Function to generate Q-Q plot
-qqgraph <- function(x){
+qqgraph <- function(x, lg = F){
   
-  # Calculate Returns and get rid of NA
-  x=diff(log(x))[-1,]
+  # Calculate Returns and remove NA if applicable
+  if (isTRUE(lg)) { x = diff(log(x))[-1,] }
   
   # Loop enables to generate multiple plots if there are more than 1   
-  for (n in seq(colnames(x))){
+  for (n in 1:ncol(x)){
+    
+    # Current Column
+    security <- x[,n]
     
     # Plot QQ plot
-    qqnorm(x[,n],
-           main = sprintf("%s Q-Q Plot", colnames(x[,n])), # Security title
-           sub = "Source: Yahoo Finance"
-    )
+    qqnorm(security,
+           main = sprintf("%s Q-Q Plot", colnames(security)),
+           sub = "Source: Yahoo Finance")
     
     # Add line
-    qqline(x[,n],
+    qqline(security,
            col = "red",
            lwd = 3)
   }
 }
 # Test
-qqgraph(stock_data)
+qqgraph(returns_df)
