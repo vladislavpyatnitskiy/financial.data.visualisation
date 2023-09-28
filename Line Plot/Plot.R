@@ -1,17 +1,26 @@
 # Function to create plots from each data set column 
-plot_data <- function(x){
+plot_data <- function(x, lg = F){
+  
+  # Make logs if needed
+  if (isTRUE(lg)) { x = diff(log(x))[-1,] }
   
   # For each column in data set
   for (n in seq(colnames(x))){
-
+    
+    # Define column
+    security <- x[,n]
+    
     # Plot
-    plot(x[,n],
-         main=sprintf("%s Performance", colnames(x[,n])), # Title of Security
+    plot(security,
+         main=sprintf("%s Performance", colnames(security)), # Security Title
          sub="Source: Yahoo! Finance",
          xlab="Trading Days",
-         ylab=sprintf("%s Prices", colnames(x[,n])) # Prices of Security
+         ylab=sprintf("%s Prices", colnames(security)) # Security Prices
     )
+    
+    # Add horizontal line
+    abline(h = 0)
   }
 }
 # Test
-plot_data(stock_data)
+plot_data(returns_df)
