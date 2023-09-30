@@ -2,21 +2,15 @@
 piePlot <- function(slices, tickers, main = NULL, sub = NULL){
   
   # Percentage calculation
-  pct <- round(slices / sum(slices)*100)
+  pct <- round(slices / sum(slices) * 100)
   
-  # Add percents to labels 
-  lbls <- paste(tickers, pct) 
-  
-  # Add % to labels 
-  lbls <- paste(lbls,"%",sep="") 
+  # Join tickers with percentages
+  lbls <- sprintf("%s %s%%", tickers, pct)
   
   # Pie Chart configuration
-  pie(slices,labels = lbls,
-      col = rainbow(length(lbls)),
-      main = main, 
-      mtext = "hdds")
   pie(slices,
       labels = lbls,
+      col = rainbow(length(lbls)),
       main = main,
       sub = sub) 
 }
