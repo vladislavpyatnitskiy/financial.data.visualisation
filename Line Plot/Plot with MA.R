@@ -25,20 +25,14 @@ colnames(portfolioPrices) <- tickers
 portfolioReturns <- ROC(portfolioPrices, type = "discrete")
 portfolioReturns <-as.timeSeries(portfolioPrices)
 
-chart_with_ma <- function(x){
-  # For each column in dataset
-  for (n in 1:ncol(x)){
-    # Take column name
-    name_for_MA <- colnames((x)[,n])
-    
-    # Make it string to put into plot title later
-    main_for_MA <- sprintf("%s Stock Performance", name_for_MA)
+# Chart with Moving Averages
+chart_with_ma <- function(x){ for (n in 1:ncol(x)){ security <- x[,n]
     
     # Create chart itself
-    new_chart_series_with_MA <- chartSeries(x[,n],
-                name = main_for_MA, # title of plot
-                theme = "black", # colour of plot
-                TA="addEMA(50, col='purple');addEMA(200, col='red')")
-  }
+    new_chart_series_with_MA <- chartSeries(round(security, 2),
+                name = sprintf("%s Stock Performance", colnames(security)), 
+                theme = "white", # colour of plot
+                TA="addEMA(50, col='purple');addEMA(200, col='red')") }
 }
+# Test
 chart_with_ma(portfolioReturns)
