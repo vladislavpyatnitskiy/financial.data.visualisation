@@ -12,7 +12,8 @@ plot_data <- function(x, lg = F){
          main=sprintf("%s Performance", colnames(security)), # Security Title
          sub="Source: Yahoo! Finance",
          xlab="Trading Days",
-         ylab=sprintf("%s Prices", colnames(security)))
+         ylab=sprintf("%s Prices", colnames(security)),
+         las = 1)
     
     # Add horizontal line
     abline(h = 0) }
