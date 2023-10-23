@@ -9,7 +9,7 @@ bond.plt <- function(P, C = 0, ytm, f = 1, l.bound.r = 0, h.bound.r = 100){
   for (n in l.bound.r:h.bound.r){ r <- 0.01 * (1 * n)
     
     # Denominator
-    d <- (1 + r/f) ^ ytm * f
+    d <- (1 + r / f) ^ ytm * f
     
     # Add rate value to list
     l.r <- c(l.r, r)
@@ -18,16 +18,13 @@ bond.plt <- function(P, C = 0, ytm, f = 1, l.bound.r = 0, h.bound.r = 100){
     C.part <- (C * P) / f
     
     # Rate part
-    r.part <- ((f/r) - f/(r * d))
+    r.part <- (f / r - f / (r * d))
     
     # Principle part
     P.part <- P / d
     
-    # Bond price
-    B.price = C.part * r.part + P.part
-    
     # Add bond price value to list
-    l.B.prices <- c(l.B.prices, B.price) }
+    l.B.prices <- c(l.B.prices, C.part * r.part + P.part) }
   
   # Generate plot
   plot(x = l.r,
