@@ -1,50 +1,37 @@
-# Function to plot a relationship between yield and price
-bond_plot <- function(bond_principle,
-                      bond_coupon_rate = 0,
-                      bond_year_to_mat,
-                      n_an_b = 1,
-                      low_bound_yield = 0,
-                      high_bound_yield = 100){
+# Function to plot a relationship between rate and price
+bond.plt <- function(P, C = 0, ytm, f = 1, l.bound.r = 0, h.bound.r = 100){
   
-  # Make an empty list for yields
-  list_for_yields <- 0
-  
-  # Make an empty list for prices
-  list_for_bond_prices <- 0
+  # Empty lists for yields and prices
+  l.r <- 0
+  l.B.prices <- 0
   
   # For each yield value
-  for (n in low_bound_yield:high_bound_yield){
+  for (n in l.bound.r:h.bound.r){ r <- 0.01 * (1 * n)
     
-    # Calculate Interest Rate
-    bond_interest_rate <- 0.01 * (1 * n)
+    # Denominator
+    d <- (1 + r/f) ^ ytm * f
     
-    # Add interest rate value to list
-    list_for_yields <- c(list_for_yields, bond_interest_rate)
+    # Add rate value to list
+    l.r <- c(l.r, r)
     
-    # Calculate coupon part
-    coupon_part <- (bond_coupon_rate * bond_principle) / n_an_b
+    # Coupon part
+    C.part <- (C * P) / f
     
-    # Calculate interest rate part
-    bond_rate_part <- ((n_an_b/bond_interest_rate) -
-                         n_an_b/(bond_interest_rate *
-                                   (1 + bond_interest_rate/n_an_b) ^
-                                   bond_year_to_mat * n_an_b))
-    # Calculate principle part
-    principle_part <- bond_principle / ((1 + bond_interest_rate/n_an_b) ^
-                                          bond_year_to_mat * n_an_b)
-    # Calculate price of bond
-    price_of_the_bond = coupon_part * bond_rate_part + principle_part
+    # Rate part
+    r.part <- ((f/r) - f/(r * d))
+    
+    # Principle part
+    P.part <- P / d
+    
+    # Bond price
+    B.price = C.part * r.part + P.part
     
     # Add bond price value to list
-    list_for_bond_prices <- c(list_for_bond_prices, price_of_the_bond)
-  }
-  
-  bond_min_value <- min(list_for_bond_prices)
-  bond_max_value <- max(list_for_bond_prices)
+    l.B.prices <- c(l.B.prices, B.price) }
   
   # Generate plot
-  plot(x = list_for_yields,
-       y = list_for_bond_prices,
+  plot(x = l.r,
+       y = l.B.prices,
        type = "l",
        xlab = "Bond Yield",
        ylab = "Bond Price",
@@ -52,12 +39,7 @@ bond_plot <- function(bond_principle,
        sub = "Source: None",
        col = "red",
        lwd = 3)
-       #ylim = c(bond_min_value, bond_max_value))
+  #ylim = c(min(l.B.prices), max(l.B.prices))
 }
 # Test
-bond_plot(bond_principle = 1000,
-          bond_coupon_rate = 0.08,
-          bond_year_to_mat = 3,
-          n_an_b = 1,
-          low_bound_yield = 0,
-          high_bound_yield = 20)
+bond.plt(P = 1000, C = 0.08, ytm = 3, f = 1, l.bound.r = 0, h.bound.r = 20)
