@@ -1,49 +1,37 @@
 # Libraries
-lapply(c("fGarch", "timeSeries"),
-       require, character.only = TRUE)
+lapply(c("fGarch", "timeSeries"), require, character.only = TRUE)
 
 # Function to generate plot with VaR values (V-C method) 
-val_risk <- function(x, lg = F){
+VaR.plt <- function(x, VaR = c(95, 99, 99.9), lg = F){
   
   # Calculate Returns and remove NA if needed
   if (isTRUE(lg)) { x=diff(log(x))[-1,] }
   
   # For each column in data set
-  for (n in 1:ncol(x)){
-
-    # Assign variable for each column proceeding loop
-    security <- x[,n]
+  for (n in 1:ncol(x)){ s <- x[,n]
     
     # Set index
-    t <- seq(nrow(security))
+    t <- seq(nrow(s))
     
     # Set up GARCH model
-    garchmodel1 <- garchFit( ~ garch(1,1), data=coredata(security),
-                             trace=FALSE)
-    
-    # Calculate VaR at 95%
-    var5.garch <- mean(security) + qnorm(0.05) * garchmodel1@sigma.t
-    
-    # Calculate VaR at 99%
-    var1.garch <- mean(security) + qnorm(0.01) * garchmodel1@sigma.t
-    
-    # Calculate VaR at 99.9%
-    var0.1.garch <- mean(security) + qnorm(0.001) * garchmodel1@sigma.t
+    gm <- garchFit( ~ garch(1,1), data=coredata(s), trace=FALSE)
     
     # Plot graph
-    plot(t, security, type="l",
+    plot(t, s, type="l",
          xlab = "Trading Days",
          ylab = "Returns",
-         main =sprintf("%s VaR GARCH(1,1)", colnames(security)),
+         main = sprintf("%s VaR GARCH(1,1)", colnames(s)),
          col = "black",
-         sub = "Source: Yahoo! Finance",
+         sub = "Data Source: Yahoo! Finance",
          las = 1)
     
-    # Create lines of each VaR value
-    lines(t, var5.garch, col ="green")
-    lines(t, var1.garch, col ="blue")
-    lines(t, var0.1.garch, col ="red")
-  }
+    # Add horizontal lines
+    abline(h = seq(-1, 1, 0.05), lty = 3, col = "grey")
+    
+    # Plot VaR values 
+    for (v in seq(VaR)){ v.g <- mean(s) + qnorm(1 - VaR[v] * 0.01) * gm@sigma.t
+      
+      lines(t, v.g, col = v + 1) } } # VaR lines
 }
 # Test
-val_risk(stock_data, lg = T)
+VaR.plt(stock_data, VaR = c(95, 97.5, 99), lg = T)
