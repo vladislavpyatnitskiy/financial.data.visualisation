@@ -1,42 +1,32 @@
-# Function to plot a relationship between rate and price
-bond.plt <- function(P, C = 0, ytm, f = 1, l.bound.r = 0, h.bound.r = 100){
+# Relationship between rate and price
+bond.plt <- function(P, C = 0, ytm, f = 1, l.bound = 0, h.bound = 100){
   
-  # Empty lists for yields and prices
-  l.r <- 0
-  l.B.prices <- 0
+  # Empty lists for prices
+  l.B.prices <- NULL
   
-  # For each yield value
-  for (n in l.bound.r:h.bound.r){ r <- 0.01 * (1 * n)
-    
-    # Denominator
-    d <- (1 + r / f) ^ ytm * f
-    
-    # Add rate value to list
-    l.r <- c(l.r, r)
-    
-    # Coupon part
-    C.part <- (C * P) / f
-    
-    # Rate part
-    r.part <- (f / r - f / (r * d))
-    
-    # Principle part
-    P.part <- P / d
-    
-    # Add bond price value to list
-    l.B.prices <- c(l.B.prices, C.part * r.part + P.part) }
+  # For each yield value add bond price value to list
+  for (n in l.bound:h.bound){ d <- (1 + .01 * n / f) ^ ytm * f
+  
+  l.B.prices <- c(l.B.prices, P * (C / .01 / n * (1 - 1 / d) + 1 / d)) }
   
   # Generate plot
-  plot(x = l.r,
+  plot(x = as.vector(seq(l.bound, h.bound) * .01),
        y = l.B.prices,
        type = "l",
        xlab = "Bond Yield",
        ylab = "Bond Price",
        main = "Bond Pricing Dependency On Yield",
-       sub = "Source: None",
        col = "red",
-       lwd = 3)
-  #ylim = c(min(l.B.prices), max(l.B.prices))
+       lwd = 3,
+       las = 1)
+  
+  # Axes 
+  axis(side = 1, at = seq(10, 90, 20) * .01)
+  axis(side = 2, at = seq(200, 1200, 100), las = 1)
+  
+  # Dotted lines
+  abline(v = seq(-1, 1, .1), lty = 3, col = "grey")
+  abline(h = seq(0, 1500, 100), lty = 3, col = "grey")
 }
 # Test
-bond.plt(P = 1000, C = 0.08, ytm = 3, f = 1, l.bound.r = 0, h.bound.r = 20)
+bond.plt(P = 1000, C = .08, ytm = 3, f = 1, l.bound = 0, h.bound = 100)
