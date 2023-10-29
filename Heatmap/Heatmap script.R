@@ -1,17 +1,14 @@
 # Function to create heatmap
-heatmap_for_correlation <- function(values_for_cor){
+heatmap.plt <- function(data){
   
-  # Convert data into matrix
-  matrix_for_correlation = as.matrix(values_for_cor)
+  m.correlation = as.matrix(data) # Convert data into matrix
   
-  # Get number of columns
-  column_for_correlation = ncol(matrix_for_correlation)
+  c.correlation = ncol(m.correlation) # Get number of columns
   
   # Cut column and row names if there are longer than 4 characters
-  names_for_correlation = abbreviate(colnames(matrix_for_correlation), 4)
+  names_for_correlation = abbreviate(colnames(m.correlation), 4)
   
-  # Calculate correlation coefficients
-  new_cor <- cor(matrix_for_correlation)
+  new_cor <- cor(m.correlation) # Calculate correlation coefficients
   
   # Create appropriate colour for each pair of correlation for heatmap
   ncolors_for_cor <- 10 * length(unique(as.vector(new_cor)))
@@ -22,51 +19,34 @@ heatmap_for_correlation <- function(values_for_cor){
   corrColorMatrix <- (rgb(r_for_corr, g_for_corr, b_for_corr))
   
   # Display heatmap
-  image(x = 1:column_for_correlation,
-        y = 1:column_for_correlation,
-        z = new_cor[, column_for_correlation:1],
+  image(x = 1:c.correlation,
+        y = 1:c.correlation,
+        z = new_cor[, c.correlation:1],
         col = corrColorMatrix,
         axes = FALSE, main = "",
         xlab = "",
         ylab = "")
   
   # Add labels for both axis
-  axis(2, at = column_for_correlation:1,
-       labels = colnames(matrix_for_correlation), las = 2)
+  axis(2, at = c.correlation:1, labels = colnames(m.correlation), las = 2)
+  axis(1, at = 1:c.correlation, labels = colnames(m.correlation), las = 2)
   
-  axis(1, at = 1:column_for_correlation,
-       labels = colnames(matrix_for_correlation), las = 2)
+  title(main = "Heatmap for Correlation") # Add title for heatmap
   
-  # Add title for heatmap
-  title(main = "Heatmap for Correlation")
-  
-  # Box heatmap
-  box()
+  box() # Box heatmap
   
   # Add correlation values as text strings to each heatmap cell
-  x = y = 1:column_for_correlation
+  x = y = 1:c.correlation
   n_x = n_y = length(y)
-  xoy = cbind(rep(x, n_y),
-              as.vector(matrix(y,
-                               n_x,
-                               n_y,
-                               byrow = TRUE)))
-  coord_for_corr = matrix(xoy,
-                          n_x * n_y,
-                          2,
-                          byrow = FALSE)
+  xoy = cbind(rep(x, n_y), as.vector(matrix(y, n_x, n_y, byrow = TRUE)))
+  coord_for_corr = matrix(xoy, n_x * n_y, 2, byrow = FALSE)
   X_for_corr = t(new_cor)
-  for (i in 1:(column_for_correlation * column_for_correlation)) {
+  for (i in 1:(c.correlation ^ 2)) {
     text(coord_for_corr[i, 1],
-         coord_for_corr[column_for_correlation *
-                          column_for_correlation + 1 - i,
-                        2],
-         round(X_for_corr[coord_for_corr[i,1],
-                          coord_for_corr[i, 2]],
-               digits = 2),
+         coord_for_corr[c.correlation * c.correlation + 1 - i, 2],
+         round(X_for_corr[coord_for_corr[i,1], coord_for_corr[i, 2]],digits=2),
          col = "white",
-         cex = 1.5)
-  }
+         cex = 1.5) }
 }
 # Test
-heatmap_for_correlation(values_for_cor = stock_log_rets)
+heatmap.plt(data = stock_log_rets)
