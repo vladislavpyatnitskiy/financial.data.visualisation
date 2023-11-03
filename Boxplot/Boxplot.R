@@ -1,53 +1,23 @@
-# Libraries to install
-lapply(c("quantmod",
-         "PortfolioAnalytics",
-         "timeSeries",
-         "fBasics"
-),
-require,
-character.only = TRUE
-)
+lapply(c("quantmod", "timeSeries"), require, character.only = T) # Libraries
 
 # Function to create boxplot
-plot_of_box <- function(x, y = NULL, z = NULL, main = NULL){
+box.plt <- function(x, s = NULL, e = NULL, main = NULL){
   
-  # Create empty variable to store values
-  portfolioPrices <- NULL
+  p <- NULL # Create empty variable to store values
   
-  # For each ticker get data
-  for (Ticker in x) 
-    portfolioPrices <- cbind(portfolioPrices,
-                             getSymbols(Ticker,
-                                        from = y,
-                                        to = z,
-                                        src = "yahoo",
-                                        auto.assign=FALSE)[,4])
-  # Get rid of NAs
-  portfolioPrices <- portfolioPrices[apply(portfolioPrices,
-                                           1,
-                                           function(x) all(!is.na(x))),]
-  # Give column names 
-  colnames(portfolioPrices) <- x
+  for (A in x) # For each ticker get data
+    p <- cbind(p,getSymbols(A,from=s,to=e,src="yahoo",auto.assign=F)[,4])
   
-  # Make data discrete
-  portfolioReturns <- ROC(portfolioPrices,
-                          type = "discrete")
+  p <- p[apply(p,1,function(x) all(!is.na(x))),] # Get rid of NA
   
-  # Make it Time Series
-  portfolioReturns <-as.timeSeries(portfolioPrices)
-
-  # Make log returns and get rid of NA
-  portfolioReturns=diff(log(portfolioReturns))[-1,]
+  colnames(p) <- x # Give column names 
   
   # Boxplot
-  boxPlot(portfolioReturns,
-          main = main,
-          title = FALSE,
-          xlab = "Source: Yahoo Finance",
-          ylab = "Returns"
-  )
+  boxplot.matrix(diff(log(as.timeSeries(p)))[-1,],main=main,title=F, las = 1, 
+                 col="steelblue",xlab="Data Source: Yahoo Finance",
+                 ylab="Returns")
+  abline(h = 0, col = "grey", lty = 3)
 }
 # Test
-plot_of_box(c("AAPL", "MSFT", "META", "GOOGL", "AMZN"),
-            y = "2020-01-01",
-            main = "Boxplot of IT companies")
+box.plt(c("AAPL", "MSFT", "META", "GOOGL", "AMZN"),s = "2020-01-01",
+        main = "Boxplot of IT companies")
