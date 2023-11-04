@@ -1,9 +1,8 @@
 lapply(c("quantmod", "timeSeries"), require, character.only = T) # Library
 
 # Chart with Moving Averages
-ma.plt <- function(tickers, s = NULL, e = NULL, data = T){ 
+ma.plt <- function(tickers, s = NULL, e = NULL, data = T){ # Variable for data
   
-  # Empty variable for data
   if (isFALSE(data)){ p <- NULL # Data download loop for 4 scenarios:
   
   for (Ticker in tickers){ if (is.null(s) && is.null(e)) { # none is typed
@@ -30,16 +29,14 @@ ma.plt <- function(tickers, s = NULL, e = NULL, data = T){
   
   for (n in 1:ncol(r)){ # Create plot for each column
   
-    chartSeries(round(r[,n], 2),
+    chartSeries(round(r[,n], 2), theme = "white",
                 name=sprintf("%s Stock Performance",colnames(r[,n])),
-                theme = "white",
                 TA="addEMA(50, col='purple');addEMA(200, col='red')")} } else {
                   
   for (n in 1:ncol(tickers)){ # Create plot for each column when data out Yahoo
                     
-    chartSeries(round(tickers[,n], 2),
+    chartSeries(round(tickers[,n], 2), theme = "white",
                 name=sprintf("%s Stock Performance",colnames(tickers[,n])),
-                theme = "white",
                 TA="addEMA(50, col='purple');addEMA(200, col='red')") } }
 }
 ma.plt(tickers = "OMF", s = "2022-01-01", e = "2023-01-01", data = F) # Test
