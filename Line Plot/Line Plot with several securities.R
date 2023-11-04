@@ -1,16 +1,11 @@
-# Plot with Performance of several assets
-lines.plt <- function(x, name = NULL, ylab = NULL){
+# Performance Plot of several assets
+lines.plt <- function(x, name = NULL, ylab = NULL){ x <- diff(log(x))
   
-  # Transforming data
-  x <- diff(log(x))
-  x[1,] <- 0
+  x[1,] <- 0 # Transform data & Plot
   x <- apply(x, 2, function(col) exp(cumsum(col)) - 1)
   
-  # Plot
-  plot(x[,1], ylim=c(min(x),max(x)), main=sprintf("%s",name), ylab=ylab, las=1)
+  plot(x[,1],ylim=c(min(x),max(x)),main=sprintf("%s",name),ylab=ylab,las=1) 
   
-  # Add other assets
-  for (n in 2:ncol(x)){ lines(x[,n], col = n) }
+  for (n in 2:ncol(x)){ lines(x[,n], col = n) } # Add other assets
 }
-# Test
-lines.plt(stock_data, "Stock Performance", ylab = "Return")
+lines.plt(stock_data, "Stock Performance", ylab = "Return") # Test
