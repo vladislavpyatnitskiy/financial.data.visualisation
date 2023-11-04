@@ -1,7 +1,6 @@
 # Barplot
-bar.plt <- function(x, col = "blue", main = NULL){
+bar.plt <- function(x, col = "blue", main = NULL){ # Data Cleaning
   
-  # Data Cleaning
   x<-sort(apply(x,2,function(col) exp(sum(diff(log(col))[-1]))-1),decreasing=T)
   
   # Barplot
@@ -14,9 +13,7 @@ bar.plt <- function(x, col = "blue", main = NULL){
                             sub = "Data Source: Yahoo! Finance",
                             xlab = "Returns",
                             ylab = "",
-                            xlim = c(signif(min(x), 1),
-                                     signif(max(x), 1)))
-                    
+                            xlim = c(signif(min(x), 1), signif(max(x), 1)))
   # Add grey dotted lines
   abline(h = bar.plt.script, col = "grey",lty = 3) # through bars
   
@@ -28,5 +25,4 @@ bar.plt <- function(x, col = "blue", main = NULL){
   
   box() # Make borders for plot
 }
-# Test
-bar.plt(stock_data, main = "Asset Performance")
+bar.plt(stock_data, main = "Asset Performance") # Test
