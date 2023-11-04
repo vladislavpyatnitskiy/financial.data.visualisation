@@ -1,80 +1,36 @@
-# Libraries you need
-lapply(c("quantmod",
-         "PortfolioAnalytics",
-         "timeSeries",
-         "fBasics",
-         "dplyr"
-),
-require,
-character.only = TRUE
-)
-
-# Type stocks you want to get Beta for
-tickers_for_test <- c("AIG", "MET", "UNM", "HIG", "OMF")
+lapply(c("quantmod", "timeSeries"), require,character.only = T) # Libraries
 
 # Function to visualise Beta Scatter Plot
-betaplot <- function(y, bnchm = "^GSPC", start_date = NULL, end_date = NULL){
+beta.plt <- function(y, benchmark = "^GSPC", s = NULL, e = NULL){
+  
+  y <- c(y, benchmark) # Add benchmark to list
+  
+  p <- NULL # Create an empty variable
+  
+  for (A in y){ if (is.null(s) && is.null(e)) { # Download data when dates off
 
-  # Add benchmark to list
-  y <- c(y, bnchm)
+      p<-cbind(p,getSymbols(A,from=as.Date(Sys.Date())-365,to=Sys.Date(),
+                                          src = "yahoo", auto.assign=F)[,4])
+    } else { # When dates are set
+      
+      p<-cbind(p,getSymbols(A,from=s,to=e,src="yahoo",auto.assign=F)[,4]) } }
   
-  # Create an empty variable
-  portfolioPrices <- NULL
+  p <- p[apply(p,1, function(x) all(!is.na(x))),] # Get rid of NA
   
-  # Loop for data extraction
-  for (Ticker in y){
-    # Set up statements for start and end dates
-    if (is.null(start_date) && is.null(end_date)) {
-      # When neither start date nor end date are defined
-      portfolioPrices <- cbind(portfolioPrices,
-                               getSymbols(Ticker,
-                                          from = as.Date(Sys.Date()) - 365,
-                                          to = Sys.Date(),
-                                          src = "yahoo",
-                                          auto.assign=FALSE)[,4])
-    } else { 
-      # When both start date and end date are defined
-      portfolioPrices <- cbind(portfolioPrices,
-                               getSymbols(Ticker,
-                                          from = start_date,
-                                          to = end_date,
-                                          src = "yahoo", 
-                                          auto.assign=FALSE)[,4]) }
-  }
-  # Get rid of NAs
-  portfolioPrices <- portfolioPrices[apply(portfolioPrices,1,
-                                           function(x) all(!is.na(x))),]
-  # Put the tickers in data set
-  colnames(portfolioPrices) <- y
+  colnames(p) <- y # Put the tickers in data set
   
-  # Make data discrete
-  portfolioReturns <- ROC(portfolioPrices, type = "discrete")
+  x=diff(log(as.timeSeries(p)))[-1,] # Returns and NA off
   
-  # Make it time series
-  portfolioReturns <-as.timeSeries(portfolioPrices)
+  stock_returns<-x[,-which(names(x)==benchmark)] # Subset index from data set
   
-  # Calculate Returns and get rid of NA
-  x=diff(log(portfolioReturns))[-1,]
-  
-  # Copy column index column and make separate column
-  spx <- x[,bnchm]
-  
-  # Subset index from data set
-  stock_returns <- x[, -which(names(x) == bnchm)]
-  
-  # Loop generates multiple plots if there are more than 1 for each column   
+  # Loop generates Scatter plots with trend line  
   for (n in 1:ncol(stock_returns)) { security <- stock_returns[,n]
+  
+    plot_for_beta<-plot(x[,benchmark], security,xlab="Market Return (%)",las=1,
+                          ylab = sprintf("%s Return (%%)", colnames(security)),
+                          main = sprintf("%s Beta", colnames(security)),
+                          sub = "Data Source: Yahoo Finance")
     
-    # Create Scatter Plot
-    plot_for_beta <- plot(spx,
-                          security,
-                          ylab=sprintf("%s Return (%%)", colnames(security)),
-                          xlab="Market Return (%)",
-                          main=sprintf("%s Beta", colnames(security)),
-                          sub = "Source: Yahoo Finance",
-                          las = 1)
-    # Draw a trend line
-    abline_for_beta <- abline(lm(security ~ spx), col = "red", lwd = 3) }
+    abline_for_beta <- abline(lm(security ~ x[,benchmark]),col="red",lwd=3) }
 }
-# Test
-betaplot(tickers_for_test, bnchm = "^GSPC")
+beta.plt(c("AIG", "MET", "UNM", "HIG", "OMF"), benchmark = "^GSPC") # Test
