@@ -22,6 +22,10 @@ risk.return.plt <- function(x,s = NULL,e = as.Date(Sys.Date()),data = T,lg=F){
          main = "Risk & Return Plot", ylim = c(min(r)-3, max(r)+3),
          xlim = c(min(r.sd)-3, max(r.sd)+3)) # Plot
     
+    abline(lm(r ~ r.sd), col="red", lwd=3) # Add regression line
+    
+    abline(h = 0) # Add horizontal line 
+    
     text(r.sd, r+1, labels=names(r.sd), pos = 4) # Put labels
     
   } else { if (isTRUE(lg)){ p <-diff(log(as.timeSeries(x)))[-1,] }
@@ -34,7 +38,12 @@ risk.return.plt <- function(x,s = NULL,e = as.Date(Sys.Date()),data = T,lg=F){
          main = "Risk & Return Plot", ylim = c(min(r)-3, max(r)+3),
          xlim = c(min(r.sd)-3, max(r.sd)+3)) # Plot
     
+    abline(lm(r ~ r.sd), col="red", lwd=3) # Add regression line
+    
+    abline(h = 0) # Add horizontal line 
+    
     text(r.sd, r+1, labels=names(r.sd), pos = 4)} # Put labels
 }
-risk.return.plt(x = c("AMZN", "GOOGL", "MSFT", "AAPL", "NFLX", "META", "NVDA"),
-                "2023-10-10")
+risk.return.plt(x = c("AMZN", "GOOGL", "MSFT", "AAPL", "NFLX", "META", "NVDA",
+                      "TSLA", "ORCL", "INTC", "TSM", "ASML", "AMD", "QCOM",
+                      "MU"), "2023-10-10")
