@@ -15,6 +15,7 @@ Libraries:
 * tidyr
 * ggrepel
 * dplyr
+* Plotly
 
 2. Other:
 * quantmod
