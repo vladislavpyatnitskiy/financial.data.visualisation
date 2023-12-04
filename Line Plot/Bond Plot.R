@@ -4,9 +4,9 @@ bond.y.plt <- function(P, C = 0, y, f = 1, l.bound = 0, h.bound = 100){
   l.B.prices <- NULL # Empty lists for prices
   
   # For each yield value add bond price value to list
-  for (n in l.bound:h.bound){ d <- (1 + .01 * n / f) ^ y * f
+  for (n in l.bound:h.bound){ d <- (1 + .01 * n / f) ^ -y * f
   
-  l.B.prices <- c(l.B.prices, P * (C / .01 / n * (1 - 1 / d) + 1 / d)) }
+    l.B.prices <- c(l.B.prices, P * (C / .01 / n * (1 - d) + d)) }
   
   # Generate plot
   plot(x = as.vector(seq(l.bound, h.bound) * .01),
