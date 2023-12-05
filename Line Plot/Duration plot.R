@@ -1,18 +1,18 @@
 # Function to show Duration dependency on Year to Maturity 
-duration_plot <- function(P, C, r, f = 1, ytm = 100, D = NULL){
+duration.plt.ytm <- function(P, C, r, f = 1, ytm = 100, D = NULL){
   
   for (y in seq(ytm,from = 1)){ P. <- P * (1 + C/f)/(1 + r/f)^(y*f) # Principle
-    
+  
     PV <- NULL # Variable to store PV
     payments <- NULL # Variable to store payments
     
     for (n in 1:(y * f - 1)){ PV <- cbind(PV, C * P / f / (1 + r / f) ^ n * f) 
     
       payments <- cbind(payments, n * PV[n]) } # Coupon PV
-    
+      
     # Duration
     D <- rbind(D,(sum(payments[seq(y*f-1)])+P.*y*f)/(P.+sum(PV[seq(y*f-1)])))}
-  
+    
   # Generate plot
   plot(x = seq(ytm, from = 1),
        y = D,
@@ -31,5 +31,4 @@ duration_plot <- function(P, C, r, f = 1, ytm = 100, D = NULL){
   abline(v = seq(0, 100, 10), lty = 3, col = "grey") # lines 
   abline(h = seq(0, 100, 1), lty = 3, col = "grey")
 }
-# Test
-duration_plot(1000, 0.01, 0.1)
+duration.plt.ytm(1000, 0.01, 0.1) # Test
