@@ -1,32 +1,39 @@
 lapply(c("quantmod", "timeSeries"), require, character.only = T) # Libraries
 
 # Function to create boxplot
-box.plt <- function(x, s = NULL, e = NULL, main = NULL, data = T){
+box.plt <- function(x, s = NULL, e = NULL, main = NULL, data = T, lg = F){
   
-  if (isTRUE(data)){ # When data is needed
+  if (isTRUE(data)){ p <- NULL # data off
   
-    p <- NULL # Create empty variable to store values
+  for (A in x){ if (is.null(s) && is.null(e)) { # When dates are not defined
     
-    for (A in x) # For each ticker get data
-      p <- cbind(p,getSymbols(A,from=s,to=e,src="yahoo",auto.assign=F)[,4])
+    p <- cbind(p, getSymbols(A, src = "yahoo", auto.assign = F)[,4])
     
-    p <- p[apply(p,1,function(x) all(!is.na(x))),] # Get rid of NA
+  } else if (is.null(e)) { # When only start date is defined
     
-    colnames(p) <- x # Give column names 
+    p <- cbind(p, getSymbols(A, from = s, src="yahoo", auto.assign = F)[,4])
     
-    p <- diff(log(as.timeSeries(p)))[-1,]
+  } else if (is.null(s)) { # When only end date is defined
     
-    # Boxplot
-    boxplot.matrix(p,main=main,title=F, las=1, col="steelblue",ylab="Returns",
-                   xlab="Data Source: Yahoo Finance",ylab="Returns")
-    abline(h = 0, col = "grey", lty = 3) } else { # data is ready
-      
-    # Boxplot
-    boxplot.matrix(x,main=main,title=F,las=1,col="steelblue",ylab="Returns",
-                   xlab="Data Source: Yahoo Finance")
+    p <- cbind(p, getSymbols(A, to = e, src = "yahoo", auto.assign = F)[,4])
     
-    abline(h = 0, col = "grey", lty = 3) }
+  } else { # When both start date and end date are defined
+    
+    p <- cbind(p,getSymbols(A,from=s,to=e,src="yahoo",auto.assign=F)[,4]) } }
+  
+  p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
+  
+  colnames(p) <- x
+  
+  x <- p } # Give column names 
+  
+  if (isTRUE(lg) || isTRUE(data)) { x <- diff(log(as.timeSeries(x)))[-1,] }
+  
+  boxplot.matrix(x, main = main, title = F, las = 1, col = "steelblue",
+                 xlab = "Data Source: Yahoo Finance", ylab = "Returns")
+  
+  abline(h = 0, col = "grey", lty = 3) # data is ready
 }
 # Test
-box.plt(c("AAPL", "MSFT", "META", "GOOGL", "AMZN"),s = "2020-01-01",
+box.plt(c("AAPL", "MSFT", "META", "GOOGL", "AMZN"),s = "2023-01-01",
         main = "Boxplot of IT companies")
