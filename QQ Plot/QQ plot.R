@@ -5,19 +5,19 @@ qq.plt <- function(x, lg = F, data = F, s = NULL, e = NULL){
   
   for (A in x){ if (is.null(s) && is.null(e)) { # When dates are not defined
     
-      p <- cbind(p, getSymbols(A, src = "yahoo", auto.assign = F)[,4])
+    p <- cbind(p, getSymbols(A, src = "yahoo", auto.assign = F)[,4])
     
-    } else if (is.null(e)) { # When only start date is defined
+  } else if (is.null(e)) { # When only start date is defined
     
-      p <- cbind(p, getSymbols(A, from = s, src="yahoo", auto.assign=F)[,4])
+    p <- cbind(p, getSymbols(A, from = s, src="yahoo", auto.assign=F)[,4])
     
-    } else if (is.null(s)) { # When only end date is defined
+  } else if (is.null(s)) { # When only end date is defined
     
-      p <- cbind(p, getSymbols(A, to = e, src="yahoo", auto.assign = F)[,4])
+    p <- cbind(p, getSymbols(A, to = e, src="yahoo", auto.assign = F)[,4])
     
-    } else { # When both start date and end date are defined
+  } else { # When both start date and end date are defined
     
-      p <- cbind(p,getSymbols(A,from=s,to=e,src="yahoo",auto.assign=F)[,4]) } }
+    p <- cbind(p,getSymbols(A,from=s,to=e,src="yahoo",auto.assign=F)[,4]) } }
   
   p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
   
@@ -31,12 +31,12 @@ qq.plt <- function(x, lg = F, data = F, s = NULL, e = NULL){
   
     qqnorm(s, main = sprintf("%s Q-Q Plot", colnames(s)), las = 1) # QQ plot
     
-    axis(side = 2, at = seq(-1, 1, .01), las = 1) # Y-axis with 0.01 intervals
+    for (n in 1:2){ axis(side = 2 * n, at = seq(-1,1,.01), las = 1) } # Y-axes
     
     qqline(s, col = "red", lwd = 3)  # Add line
-  
+    
     # Add grey dotted vertical & horizontal lines
     for (n in seq(-3, 3, 1)){ abline(v = n, col = "grey", lty = 3) }
     for (n in seq(-1, 1, .01)){ abline(h = n, col = "grey", lty = 3) } }
 }
-qq.plt(x = c("AIG","MET","HIG","UNM","OMF"),lg=T,data=T,s="2023-10-01") # Test
+qq.plt(x = c("AIG", "OMF", "UNM"), lg = T, data = T ,s = "2023-10-01") # Test
