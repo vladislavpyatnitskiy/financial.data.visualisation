@@ -1,4 +1,6 @@
-# Data Visualisation for finance
+# Data Visualisation for Finance
+
+![](https://github.com/vladislavpyatnitskiy/financial.data.visualisation/blob/main/Scatter%20Plot/FTSE%20100%20Bubble%20Plot.png?raw=true)
 
 Welcome to the Finance Data Visualisation Toolkit – a powerful set of tools and resources designed to facilitate comprehensive data visualization in the field of finance. This repository aims to provide a collection of scripts, notebooks, and examples for creating insightful visualizations to aid financial analysis, decision-making, and reporting.
 
