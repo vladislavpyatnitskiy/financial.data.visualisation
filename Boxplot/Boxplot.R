@@ -5,27 +5,27 @@ box.plt <- function(x, s = NULL, e = NULL, data = T, lg = F){ # Box Plot
   if (isTRUE(data)){ p <- NULL # data off
   
     for (A in x){ if (is.null(s) && is.null(e)) { # When dates are not defined
-    
+      
         p <- cbind(p, getSymbols(A, src = "yahoo", auto.assign = F)[,4])
+      
+      } else if (is.null(e)) { # When only start date is defined
+      
+        p <- cbind(p, getSymbols(A, from = s, src="yahoo", auto.assign=F)[,4])
+        
+      } else if (is.null(s)) { # When only end date is defined
+        
+        p <- cbind(p, getSymbols(A, to = e, src = "yahoo", auto.assign=F)[,4])
+        
+      } else { # When both start date and end date are defined
+        
+        p <- cbind(p,getSymbols(A,from=s,to=e,src="yahoo",auto.assign=F)[,4])} }
+      
+    p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
     
-    } else if (is.null(e)) { # When only start date is defined
+    colnames(p) <- x
     
-      p <- cbind(p, getSymbols(A, from = s, src="yahoo", auto.assign = F)[,4])
+    x <- p } # Give column names 
     
-    } else if (is.null(s)) { # When only end date is defined
-    
-      p <- cbind(p, getSymbols(A, to = e, src = "yahoo", auto.assign = F)[,4])
-    
-    } else { # When both start date and end date are defined
-    
-      p <- cbind(p,getSymbols(A,from=s,to=e,src="yahoo",auto.assign=F)[,4]) } }
-  
-  p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
-  
-  colnames(p) <- x
-  
-  x <- p } # Give column names 
-  
   if (isTRUE(lg) || isTRUE(data)) { x <- diff(log(as.timeSeries(x)))[-1,] }
   
   boxplot.matrix(x, main = "Fluctuations of Securities", title = F, las = 1,
@@ -35,11 +35,11 @@ box.plt <- function(x, s = NULL, e = NULL, data = T, lg = F){ # Box Plot
   
   m <- round(min(l) * -1 + max(l),1)/10^(nchar(round(min(l) * -1 + max(l),1)))
   
-  if (m > 0 && m < 1){ mn <- 1 * 10 ^ (nchar(m) - 6) }
+  i <- c(0, 1, 2, 5) # Calculate intervals for lines and axes
   
-  else if (m > 1 && m < 2){ mn <- 2 * 10 ^ (nchar(m) - 6) }
-  
-  else if (m > 2 && m < 5){ mn <- 5 * 10 ^ (nchar(m) - 6) }
+  for (n in 1:length(i) - 1){ if (m > i[n] && m < i[n + 1]){
+    
+      mn <- i[n + 1] * 10 ^ (nchar(m) - 6) } else { next } }
   
   axis(side = 4, at = seq(-1, 1, by = mn / 2), las = 2)
   
