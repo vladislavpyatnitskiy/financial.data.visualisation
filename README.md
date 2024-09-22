@@ -1,8 +1,8 @@
-# Data Visualisation for Finance
+# Financial Data Visualisation with R
 
-![](https://github.com/vladislavpyatnitskiy/financial.data.visualisation/blob/main/Scatter%20Plot/FTSE%20100%20Bubble%20Plot.png?raw=true)
+[![R](https://img.shields.io/badge/R-4.x-blue.svg)](https://www.r-project.org/)
 
-Welcome to the Finance Data Visualisation Toolkit – a powerful set of tools and resources designed to facilitate comprehensive data visualization in the field of finance. This repository aims to provide a collection of scripts, notebooks, and examples for creating insightful visualizations to aid financial analysis, decision-making, and reporting.
+Welcome to the Financial Data Visualisation with R Toolkit – a powerful set of tools and resources designed to facilitate comprehensive data visualization in the field of finance. This repository aims to provide a collection of scripts, notebooks, and examples for creating insightful visualizations to aid financial analysis, decision-making, and reporting.
 
 ## 1. Scatter Plot 
 
