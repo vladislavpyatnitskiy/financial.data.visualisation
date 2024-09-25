@@ -2,27 +2,23 @@ lapply(c("quantmod", "timeSeries"), require, character.only = T) # Libraries
 
 box.plt <- function(x, s = NULL, e = NULL, data = T, lg = F){ # Box Plot
   
-  if (isTRUE(data)){ p <- NULL # data off
+  if (isTRUE(data)){ p <- NULL # 4 scenarios: no dates, only start or end dates, both dates
   
-    for (A in x){ if (is.null(s) && is.null(e)) { # When dates are not defined
+    for (A in x){ if (is.null(s) && is.null(e)) { 
       
-        p <- cbind(p, getSymbols(A, src = "yahoo", auto.assign = F)[,4])
+        q <- getSymbols(A, src = "yahoo", auto.assign = F)
       
-      } else if (is.null(e)) { # When only start date is defined
+    } else if (is.null(e)){ q <- getSymbols(A,from=s,src="yahoo",auto.assign=F)
+    
+    } else if (is.null(s)){ q <- getSymbols(A, to=e, src="yahoo",auto.assign=F)
+    
+    } else { q <- getSymbols(A, from = s, to = e, src="yahoo", auto.assign=F) }
       
-        p <- cbind(p, getSymbols(A, from = s, src="yahoo", auto.assign=F)[,4])
-        
-      } else if (is.null(s)) { # When only end date is defined
-        
-        p <- cbind(p, getSymbols(A, to = e, src = "yahoo", auto.assign=F)[,4])
-        
-      } else { # When both start date and end date are defined
-        
-        p <- cbind(p,getSymbols(A,from=s,to=e,src="yahoo",auto.assign=F)[,4])} }
-      
+      p <- cbind(p, q[,4]) } # Join all columns into one data frame
+    
     p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
     
-    colnames(p) <- x
+    colnames(p) <- x # Put the tickers in column names
     
     x <- p } # Give column names 
     
@@ -39,7 +35,7 @@ box.plt <- function(x, s = NULL, e = NULL, data = T, lg = F){ # Box Plot
   
   for (n in 1:length(i) - 1){ if (m > i[n] && m < i[n + 1]){
     
-      mn <- i[n + 1] * 10 ^ (nchar(m) - 6) } else { next } }
+    mn <- i[n + 1] * 10 ^ (nchar(m) - 6) } else { next } }
   
   axis(side = 4, at = seq(-1, 1, by = mn / 2), las = 2)
   
