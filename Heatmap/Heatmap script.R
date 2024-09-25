@@ -4,28 +4,24 @@ heatmap.plt <- function(x, size = 1.5, lg = T, data = F, s = NULL, e = NULL){
   
   if (isTRUE(data)){ p <- NULL # data off
   
-  for (A in x){ if (is.null(s) && is.null(e)) { # When dates are not defined
+    for (A in x){ if (is.null(s) && is.null(e)) { 
     
-        p <- cbind(p, getSymbols(A, src = "yahoo", auto.assign = F)[,4])
-      
-    } else if (is.null(e)) { # When only start date is defined
-      
-        p <- cbind(p, getSymbols(A, from=s, src="yahoo", auto.assign = F)[,4])
-      
-    } else if (is.null(s)) { # When only end date is defined
-      
-        p <- cbind(p, getSymbols(A, to=e, src="yahoo", auto.assign = F)[,4])
-      
-    } else { # When both start date and end date are defined
-      
-        p<-cbind(p,getSymbols(A,from=s,to=e,src="yahoo",auto.assign=F)[,4]) } }
+        q <- getSymbols(A, src = "yahoo", auto.assign = F)
     
+      } else if (is.null(e)){ q<-getSymbols(A,from=s,src="yahoo",auto.assign=F)
+  
+      } else if (is.null(s)){ q<-getSymbols(A,to=e,src="yahoo",auto.assign=F)
+  
+      } else { q <- getSymbols(A,from=s,to=e,src="yahoo",auto.assign=F) }
+    
+      p <- cbind(p, q[,4]) } # Join all columns into one data frame
+  
     p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
     
     colnames(p) <- x
     
     x <- p } # Give column names 
-    
+  
   if (isTRUE(lg) || isTRUE(data)) { x <- diff(log(as.timeSeries(x)))[-1,] }
   
   m.correlation = as.matrix(x) # Convert data into matrix
