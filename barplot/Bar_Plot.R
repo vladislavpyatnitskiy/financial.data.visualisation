@@ -2,21 +2,21 @@ lapply(c("quantmod", "timeSeries"), require, character.only = T) # libraries
 
 bar.plt <- function(x, s = NULL, e = NULL, data=F){ # Bar Plot
   
-  if (isTRUE(data)){ p <- NULL # Set time period for stock price data
+  if (isTRUE(data)){ p <- NULL # data off
+  
+    for (A in x){ if (is.null(s) && is.null(e)) { 
+      
+        q <- getSymbols(A, src = "yahoo", auto.assign = F)
+      
+        } else if (is.null(e)){ q<-getSymbols(A,from=s,src="yahoo",
+                                              auto.assign=F)
     
-    for (A in x){ if (is.null(s) && is.null(e)) { # Period Intervals
+        } else if (is.null(s)){ q<-getSymbols(A,to=e,src="yahoo",auto.assign=F)
+    
+        } else { q <- getSymbols(A,from=s,to=e,src="yahoo",auto.assign=F) }
       
-        p <- cbind(p, getSymbols(A, src = "yahoo", auto.assign = F)[,4])
-      
-        } else if (is.null(e)) { p <- cbind(p, getSymbols(A,from=s,src="yahoo",
-                                                          auto.assign=F)[,4])
-      
-        } else if (is.null(s)) { p <- cbind(p, getSymbols(A,to=e,src="yahoo",
-                                                          auto.assign=F)[,4])
-      
-        } else { p <- cbind(p, getSymbols(A,from=s,to=e,src="yahoo",
-                                          auto.assign=F)[,4]) }
-    }
+      p <- cbind(p, q[,4]) } # Join all columns into one data frame
+    
     p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
     
     colnames(p) <- x # Put the tickers in data set
