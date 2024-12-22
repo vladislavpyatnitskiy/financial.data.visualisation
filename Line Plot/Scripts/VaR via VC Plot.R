@@ -19,15 +19,9 @@ VaR.plt <- function(x, VaR = c(95, 99, 99.9), lg = F){ # Plot with VaR values
     for (v in seq(VaR)){ lines(t,mean(s)+qnorm(1-VaR[v]*.01)*gm@sigma.t,
                                col=v+1) }  
     
-    m <- round(min(s)*-1 + max(s),1)/10^(nchar(round(min(s)*-1 + max(s), 1)))
+    grid(nx = NULL, ny = NULL, col = "grey", lty = "dotted", lwd = 1)
     
-    i <- c(0, 1, 2, 5) # Calculate intervals for lines and axes
-    
-    for (n in 1:length(i) - 1){ if (m > i[n] && m < i[n + 1]){
-      
-        mn <- i[n + 1] * 10 ^ (nchar(m) - 6) } else { next } }
-    
-    abline(h = seq(-1,1,by=mn)[-match(0, seq(-1,1,by=mn))], col="grey", lty=3)
+    axis(side = 4, las = 2) # Right y-axis
     
     par(mar = c(5, 4, 4, 4)) } # Define borders of the plot to fit right y-axis
 }
