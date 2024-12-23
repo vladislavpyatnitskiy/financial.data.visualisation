@@ -17,7 +17,7 @@ beta.plt <- function(y, i = "^GSPC", s=NULL, e=NULL){ # Scatter Plot of Beta
     } else { q <- getSymbols(A,from=s,to=e,src="yahoo",auto.assign=F) }
       
     p <- cbind(p, q[,4]) } # Join all columns into one data frame
-    
+  
   p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
   
   colnames(p) <- y # Put the tickers in data set
@@ -30,7 +30,9 @@ beta.plt <- function(y, i = "^GSPC", s=NULL, e=NULL){ # Scatter Plot of Beta
   
     plot(x[,i], S, sub = "Data Source: Yahoo Finance",  xlab = "Market Return",
          las = 1, ylab = "Stock Return", main=sprintf("%s Beta", colnames(S)))
-  
+    
+    grid(nx = NULL, ny = NULL, col = "grey", lty = "dotted", lwd = 1)
+    
     abline(lm(S ~ x[,i]), col = "red", lwd = 3) } # Regression line
 }
 beta.plt(c("AIG", "MET", "UNM", "HIG", "OMF"), i = "^GSPC") # Test
