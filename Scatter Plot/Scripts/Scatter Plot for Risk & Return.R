@@ -20,6 +20,9 @@ risk.return.plt <- function(x,s = NULL,e = as.Date(Sys.Date()),data = T,lg=F){
        xlim = c(min(r[2,]) - 3, max(r[2,]) + 3), las = 1) # Plot
   
   abline(lm(r[1,] ~ r[2,]), col = "red", lwd = 3)
+
+  grid(nx = NULL, ny = NULL, col = "grey", lty = "dotted", lwd = 1)
+             
   abline(h = 0) # Add regression & horizontal line
   
   text(r[2,], r[1,] + 1, labels = names(r[2,]), pos = 4) # Put labels
