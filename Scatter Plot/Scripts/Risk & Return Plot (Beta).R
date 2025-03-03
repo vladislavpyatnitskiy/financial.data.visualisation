@@ -23,7 +23,9 @@ beta.return.plt <- function(x, s = NULL,e = as.Date(Sys.Date()), i = "^GSPC"){
        xlim = c(min(o[2,]), max(o[2,]))) # Plot
   
   abline(lm(o[1,] ~ o[2,]), col = "red", lwd = 3) # Add regression line
-  
+
+  grid(nx = NULL, ny = NULL, col = "grey", lty = "dotted", lwd = 1) # Grid
+             
   abline(h = 0) # Add horizontal line 
   
   text(o[2,], o[1,] + 1, labels = names(o[2,]), pos = 4) # Put labels
