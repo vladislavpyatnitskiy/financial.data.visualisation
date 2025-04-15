@@ -1,28 +1,25 @@
 lapply(c("quantmod", "timeSeries"), require, character.only = T) # libraries
 
-bar.plt <- function(x, s = NULL, e = NULL, data=F){ # Bar Plot
+bar.plt <- function(x, s = NULL, e = NULL, data = F){ # Bar Plot
   
   if (isTRUE(data)){ p <- NULL # data off
   
-    for (A in x){ if (is.null(s) && is.null(e)) { 
-      
-        q <- getSymbols(A, src = "yahoo", auto.assign = F)
-      
-        } else if (is.null(e)){ q<-getSymbols(A,from=s,src="yahoo",
-                                              auto.assign=F)
+    src <- "yahoo"
     
-        } else if (is.null(s)){ q<-getSymbols(A,to=e,src="yahoo",auto.assign=F)
+    getData <- function(A, s, e) {
+      if (is.null(s) && is.null(e)) return(getSymbols(A,src=src,auto.assign=F)) 
+      if (is.null(e)) return(getSymbols(A, from = s, src=src, auto.assign=F)) 
+      if (is.null(s)) return(getSymbols(A, to = e, src=src, auto.assign=F)) 
+      return(getSymbols(A, from = s, to = e, src=src, auto.assign=F)) 
+    }
+    for (A in x){ p <- cbind(p, getData(A, s, e)[,4]) } # Join data
     
-        } else { q <- getSymbols(A,from=s,to=e,src="yahoo",auto.assign=F) }
-      
-      p <- cbind(p, q[,4]) } # Join all columns into one data frame
-    
-    p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
-    
-    colnames(p) <- x # Put the tickers in data set
-    
-    x <- as.timeSeries(p) } # Make it time series & perform Data Cleaning
-    
+  p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
+  
+  colnames(p) <- x # Put the tickers in data set
+  
+  x <- as.timeSeries(p) } # Make it time series & perform Data Cleaning
+  
   x <- sort(apply(x, 2, function(col) exp(sum(diff(log(col))[-1]))-1),
             decreasing=T) * 100
   
@@ -37,21 +34,8 @@ bar.plt <- function(x, s = NULL, e = NULL, data=F){ # Bar Plot
                main = sprintf("Securities Performance from %s", s), col = C,
                xlim = c(round(min(x),0)-1, round(max(x),0)+1),xpd=F) # Bar plot
   
-  m <- round(min(x)*-1 + max(x),0)/10^(nchar(round(min(x)*-1 + max(x),0))-1)
-  
-  i <- c(0, 1, 2, 5) # Calculate intervals for lines and axes
-  
-  for (n in 1:length(i) - 1){ if (m > i[n] && m < i[n + 1]){
-    
-      mn <- i[n + 1] * 10 ^ (nchar(m) - 3) } else { next } }
-  
-  axis(side = 1, las = 1, at = seq(-100, 100, mn)) # Axes
-  
-  abline(v = 0) # Break Even
-  
   # Add grey dotted lines
-  for (n in seq(-100, -mn, mn)){ abline(v = n, col = "grey", lty = 3) }
-  for (n in seq(mn, 100, mn)){ abline(v = n, col = "grey", lty = 3) }
+  grid(nx = NULL, ny = 1, col = "grey", lty = "dotted", lwd = 1)
   abline(h = B, col = "grey", lty = 3) # through bars
   
   abline(v = mean(x), col = "red", lwd = 3) # Mean percentage line
@@ -59,7 +43,7 @@ bar.plt <- function(x, s = NULL, e = NULL, data=F){ # Bar Plot
   
   par(mar = c(6, 6, 3, 3)) # Define borders of the plot
   
-  legend(x="bottom",inset=c(0,-.17),cex=.9,bty="n",horiz=T,col=c("red","green"),
+  legend(x="bottom",inset=c(0,-.22),cex=.9,bty="n",horiz=T,col=c("red","green"),
          legend=c((sprintf("Mean: %s",round(mean(x),2))),
                   sprintf("Median: %s",round(median(x),2))),xpd=T,pch=15)
   
