@@ -1,39 +1,29 @@
-# Function to plot each data column to see Stock Performance
-line.plt <- function(x, lg = F, rtrn = F){ 
+library(timeSeries) # Library
+
+line.plt <- function(x, lg = F, rtrn = F){ # Line Plot and its variations
   
-  if (isTRUE(lg) && isTRUE(rtrn)) { x = diff(log(x)) # calculate logs
+  if (isTRUE(rtrn) && isFALSE(lg)){ # Warning message
     
-    x[1,] <- 0 # Assign first value
-    x <- apply(x,2,function(col) (exp(cumsum(col))-1) * 100) 
+    message("Incorrent settings of parameters: Return ON only when log ON") }
   
-    for (n in seq(colnames(x))){ security <- x[,n] # Plot for each column
-  
-      # Plot
-      plot(security, main = sprintf("%s Performance", colnames(security)),
-           sub = "Data Source: Yahoo! Finance", xlab = "Trading Days", las = 1,
-           ylab = sprintf("%s Return (%%)", colnames(security)))
+  else { if (isTRUE(lg)){ x = diff(log(x))[-1,] # Logs
+    
+      if (isTRUE(rtrn)){ x <- apply(x,2,function(col) (exp(cumsum(col)) - 1)) }
+        
+      M <- ifelse(rtrn == T, "Return", "Fluctuations") } else { M <- "Prices" }
       
-      abline(h = 0, col = "red", lwd = 3) } } else if (isTRUE(lg)) {
-    
-      x = diff(log(x)) # calculate logs
-      x[1,] <- 0 # Assign first value
-    
-    for (n in seq(colnames(x))){ security <- x[,n] # Plot for each column
-    
-      # Plot
-      plot(security, main = sprintf("%s Performance", colnames(security)),
-           sub = "Data Source: Yahoo! Finance", xlab = "Trading Days", las = 1,
-           ylab = sprintf("%s Fluctuations", colnames(security)))
-    
-      abline(h=0,col="red",lwd=3) } } else if (isFALSE(lg) && isFALSE(rtrn)){
-       
-    for (n in seq(colnames(x))){ security <- x[,n] # Plot for each column
+    for (n in seq(colnames(x))){ s <- x[,n] # Plot for each column
+      
+      plot(s, main = sprintf("%s Performance", colnames(s)), lwd = 1, las = 1,
+           sub = "Data Source: Yahoo! Finance", xlab = "Trading Days",
+           ylab = sprintf("%s %s", colnames(s), M), col = "red")
         
-    # Plot
-    plot(security, main = sprintf("%s Performance", colnames(security)),
-         sub = "Data Source: Yahoo! Finance", xlab = "Trading Days", las = 1,
-         ylab = sprintf("%s Prices", colnames(security)))
-        
-    } }  else { sprintf("Incorrent settings of parameters") }
+      grid(nx = 1, ny = NULL, col = "grey", lty = "dotted", lwd = 1)
+      
+      axis(side = 4, las = 2) # Right y-axis
+          
+      abline(h = 0) # Break Even Point
+      
+      par(mar = rep(5, 4)) } } # Margins
 }
 line.plt(stock_data, lg = T, rtrn = T) # Test
