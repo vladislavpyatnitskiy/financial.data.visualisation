@@ -1,30 +1,25 @@
 # Relationship between rate and price
-bond.y.plt <- function(P, C = 0, y, f = 1, l.bound = 0, h.bound = 100){
+bond.y.plt <- function(P, C = 0, y, f = 1, l = 0, h = 100){
   
-  l.B.prices <- NULL # Empty lists for prices
+  p <- NULL # Empty lists for prices
   
   # For each yield value add bond price value to list
-  for (n in l.bound:h.bound){ d <- (1 + .01 * n / f) ^ -y * f
+  for (n in l:h){ d <- (1 + .01 * n / f) ^ -y * f
   
-    l.B.prices <- c(l.B.prices, P * (C / .01 / n * (1 - d) + d)) }
+    p <- c(p, P * (C / .01 / n * (1 - d) + d)) }
   
-  # Generate plot
-  plot(x = as.vector(seq(l.bound, h.bound) * .01),
-       y = l.B.prices,
+  plot(x = as.vector(seq(l, h) * .01),
+       y = p,
        type = "l",
        xlab = "Bond Yield",
        ylab = "Bond Price",
        main = "Bond Pricing Dependency On Yield",
        col = "red",
        lwd = 3,
-       las = 1)
+       las = 1) # Plot
   
-  # Axes 
-  axis(side = 1, at = seq(10, 90, 20) * .01)
-  axis(side = 2, at = seq(200, 1200, 100), las = 1)
+  axis(side = 4, las = 2) # Right y-axis
   
-  # Dotted lines
-  abline(v = seq(-1, 1, .1), lty = 3, col = "grey") 
-  abline(h = seq(0, 1500, 100), lty = 3, col = "grey")
+  grid(nx = NULL, ny = NULL, col = "grey", lty = 3, lwd = 1) # Dotted lines
 }
-bond.y.plt(P = 1000, C = .08, y = 3, f = 1, l.bound = 0, h.bound = 100) # Test
+bond.y.plt(P = 1000, C = .08, y = 3, f = 1, l = 0, h = 100) # Test
