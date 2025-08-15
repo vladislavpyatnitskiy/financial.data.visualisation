@@ -1,11 +1,21 @@
 # Libraries 
-lapply(c("ggplot2", "data.table", "timeSeries"), require, character.only = T)
+lapply(c("ggplot2", "data.table", "timeSeries","quantmod"),require,
+       character.only=T)
 
-# Function to plot Monte Carlo Simulation
-monte.carlo.plt <- function(c, ndays, n){ l.m.plt <- NULL 
+monte.carlo.plt <- function(x, ndays, n){ # Plot Monte Carlo Simulation
   
-  for (b in 1:ncol(c)){ m <- as.numeric(c[,b] / lag(c[,b])) # Plot each column
+  L <- NULL 
   
+  for (A in x){ p <- getSymbols(A, src="yahoo", auto.assign=F)[,4] 
+    
+    p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
+    
+    colnames(p) <- A # Put the tickers in data set
+    
+    p <- as.timeSeries(p)  # Make it time series & perform Data Cleaning
+
+    m <- as.numeric(p / lag(p)) # Plot each column
+    
     m[1] <- 1 # Set up a value for first observation
     
     set.seed(0) # Calculate various scenarios of Stock Performance
@@ -15,13 +25,18 @@ monte.carlo.plt <- function(c, ndays, n){ l.m.plt <- NULL
     paths <- melt(paths, id.vars = "days")
     
     # Plot with all scenarios
-    m.plt <- ggplot(paths, aes(x=days, y=(value-1)*100, col = variable)) +
-      geom_line() + theme_bw() + theme(legend.position = "none") +
-      ggtitle(sprintf("%s Performance by Monte Carlo", colnames(c[,b]))) +
-      xlab("Days Invested") + ylab("Return (%)")
+    plt <- ggplot(
+      paths,
+      aes(x=days, y=(value - 1) * 100, col = variable)) +
+      geom_line() +
+      theme_bw() +
+      theme(legend.position = "none") +
+      ggtitle(sprintf("%s Performance by Monte Carlo", A)) +
+      xlab("Days Invested") +
+      ylab("Return (%)")
     
-  l.m.plt <- list(l.m.plt, m.plt) } # Add to list
-  
-  return(l.m.plt) # Display plots
+    if (is.null(L)){ L <- plt } else { L <- list(L, plt) } }
+    
+  return(L) # Display plots
 }
-monte.carlo.plt(portfolioReturns, 1000, 100) # Test
+monte.carlo.plt(c("T", "C"), 1000, 100) # Test
