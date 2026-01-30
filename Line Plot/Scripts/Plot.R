@@ -1,11 +1,10 @@
 library(timeSeries) # Library
 
-line.plt <- function(x, lg=F, rtrn=F, sub=NULL, main=NULL, ylab=NULL,
-                     col=NULL){ 
+line.plt <- function(x, lg=F, rtrn=F, sub=NULL, main=NULL, ylab=NULL,col=NULL){ 
   
-  if (rtrn & !lg){ # Warning message
-    
-    return(message("Incorrent settings: Return ON only when log ON")) }
+  L <- "Incorrent settings: Return ON only when log ON" # Warning message
+  
+  if (rtrn & !lg) return(message(L))
   
   if (lg) x = diff(log(x))[-1,] # Logs
   
@@ -14,7 +13,7 @@ line.plt <- function(x, lg=F, rtrn=F, sub=NULL, main=NULL, ylab=NULL,
   if (rtrn) x <- apply(x, 2, function(col) (exp(cumsum(col)) - 1))
   
   for (n in seq(colnames(x))){ s <- x[,n] # Plot for each column
-    
+  
     plot(
       s,
       main = main,
