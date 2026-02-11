@@ -28,7 +28,9 @@ box.plt <- function(x, s = NULL, e = NULL, data = T, lg = F){ # Box Plot
       x <- p } # Give column names 
       
   if (lg | data) x <- diff(log(as.timeSeries(x)))[-1,] 
-  
+
+  par(mar = c(5, rep(4, 3))) # Define borders of the plot to fit right y-axis
+                   
   boxplot.matrix(
     x, 
     main = "Fluctuations of Securities", 
@@ -39,8 +41,6 @@ box.plt <- function(x, s = NULL, e = NULL, data = T, lg = F){ # Box Plot
     )
   
   axis(side = 4, las = 2)
-  
-  par(mar = c(5, rep(4, 3))) # Define borders of the plot to fit right y-axis
   
   grid(nx = NULL, ny = NULL, col = "grey", lty = "dotted", lwd = 1)
   
