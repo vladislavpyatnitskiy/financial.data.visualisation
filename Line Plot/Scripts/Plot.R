@@ -11,7 +11,9 @@ line.plt <- function(x, lg=F, rtrn=F, sub=NULL, main=NULL, ylab=NULL,col=NULL){
   M = ifelse(lg == T, ifelse(rtrn == T, "Return", "Fluctuations"), "Prices")
   
   if (rtrn) x <- apply(x, 2, function(col) (exp(cumsum(col)) - 1))
-  
+
+  par(mar = rep(5, 4)) 
+                       
   for (n in seq(colnames(x))){ s <- x[,n] # Plot for each column
   
     plot(
@@ -31,7 +33,7 @@ line.plt <- function(x, lg=F, rtrn=F, sub=NULL, main=NULL, ylab=NULL,col=NULL){
     
     abline(h = 0) # Break Even Point
     
-    par(mar = rep(5, 4)) } # Margins
+    } # Margins
 }
 line.plt(cbr_ir_data, lg = F, rtrn = F, main = "Interest Rate Dynamics",
          sub = "Data Source: cbr.ru") # Test
