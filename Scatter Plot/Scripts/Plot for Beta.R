@@ -14,7 +14,14 @@ beta.plt <- function(y, i = "^GSPC", s=NULL, e=NULL){ # Scatter Plot of Beta
     if (is.null(s)) return(getSymbols(A, to = e, src=src, auto.assign=F)) 
     return(getSymbols(A, from = s, to = e, src=src, auto.assign=F)) 
   }
-  for (A in y){ p <- cbind(p, getData(A, s, e)[,4]) } # Join data
+  for (A in y){ p <- cbind(p, getData(A, s, e)[,4]) 
+    
+    message(
+      sprintf(
+        "%s is downloaded (%s / %s)", A, which(y == A), length(y)
+      )
+    )
+  } # Join data
   
   p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
   
@@ -34,7 +41,7 @@ beta.plt <- function(y, i = "^GSPC", s=NULL, e=NULL){ # Scatter Plot of Beta
       las = 1,
       ylab = "Stock Return",
       main = sprintf("%s Beta", colnames(S))
-      )
+    )
     
     grid(nx = NULL, ny = NULL, col = "grey", lty = "dotted", lwd = 1)
     
