@@ -12,7 +12,9 @@ duration.plt.ytm <- function(P, C, r, f = 1, ytm = 100){ D = NULL
     
     # Duration
     D <- rbind(D, (sum(pays[seq(y*f-1)])+Pr*y*f) / (Pr+sum(PV[seq(y*f-1)]))) }
-  
+
+  par(mar = c(rep(5, 3), 4)) # Define borders of the plot
+                                                        
   # Generate plot
   plot(x = seq(ytm, from = 1),
        y = D,
@@ -27,7 +29,5 @@ duration.plt.ytm <- function(P, C, r, f = 1, ytm = 100){ D = NULL
   axis(side = 4, las = 2)
   
   grid(nx = NULL, ny = NULL, lty = 3, col = "grey") # Horizontal lines
-  
-  par(mar = c(5, 5, 5, 4)) # Define borders of the plot
 }
 duration.plt.ytm(1000, 0.01, 0.1) # Test
